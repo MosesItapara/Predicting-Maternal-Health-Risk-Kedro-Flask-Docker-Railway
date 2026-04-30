@@ -19,6 +19,7 @@ dependencies = [
     "setuptools; python_version >= '3.12'",
     "tensorflow",
     "xgboost",
+    "flask",
 ]
 
 [project.scripts]
