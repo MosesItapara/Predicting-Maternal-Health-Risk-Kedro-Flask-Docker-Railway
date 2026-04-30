@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Maternal Health Risk Predictor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        --rose:     #c9697a;
+        --rose-lt:  #f5dde2;
+        --rose-dk:  #a04d5d;
+        --sage:     #5a8a7a;
+        --sage-lt:  #d4ebe4;
+        --cream:    #fdf6ef;
+        --warm-wh:  #fffaf7;
+        --ink:      #2a1f1f;
+        --muted:    #7a6a6a;
+        --border:   rgba(180,140,140,0.18);
+      }
+
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background: var(--cream);
+        min-height: 100vh;
+        color: var(--ink);
+        overflow-x: hidden;
+      }
+
+      /* ── DECORATIVE BACKGROUND ── */
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(ellipse 70% 50% at 10% 0%, rgba(201,105,122,0.13) 0%, transparent 60%),
+          radial-gradient(ellipse 60% 45% at 90% 100%, rgba(90,138,122,0.12) 0%, transparent 55%),
+          radial-gradient(ellipse 50% 40% at 80% 10%, rgba(255,220,200,0.18) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* subtle dot grid */
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: radial-gradient(circle, rgba(180,120,120,0.10) 1px, transparent 1px);
+        background-size: 28px 28px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ── HEADER ── */
+      .header {
+        position: relative;
+        z-index: 2;
+        padding: 52px 24px 0;
+        text-align: center;
+      }
+
+      .header-eyebrow {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.20em;
+        text-transform: uppercase;
+        color: var(--rose);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .header-eyebrow::before,
+      .header-eyebrow::after {
+        content: '';
+        display: inline-block;
+        width: 32px;
+        height: 1px;
+        background: var(--rose);
+        opacity: 0.5;
+      }
+
+      .header-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(36px, 6vw, 52px);
+        font-weight: 600;
+        color: var(--ink);
+        line-height: 1.1;
+        letter-spacing: -0.01em;
+        margin-bottom: 14px;
+      }
+
+      .header-title em {
+        font-style: italic;
+        color: var(--rose);
+      }
+
+      .header-sub {
+        font-size: 14px;
+        font-weight: 300;
+        color: var(--muted);
+        letter-spacing: 0.03em;
+        max-width: 340px;
+        margin: 0 auto 44px;
+        line-height: 1.6;
+      }
+
+      /* ── CARD ── */
+      .page-wrap {
+        position: relative;
+        z-index: 2;
+        max-width: 560px;
+        margin: 0 auto;
+        padding: 0 20px 60px;
+      }
+
+      .card {
+        background: rgba(255, 250, 247, 0.88);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-radius: 24px;
+        border: 1px solid rgba(201,105,122,0.14);
+        box-shadow:
+          0 2px 0 rgba(255,255,255,0.9) inset,
+          0 32px 64px rgba(120,60,60,0.08),
+          0 8px 24px rgba(120,60,60,0.05);
+        padding: 36px 40px 40px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* top-left rose accent streak */
+      .card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--rose-dk), var(--rose), var(--sage));
+        border-radius: 24px 24px 0 0;
+      }
+
+      /* ── FIELDS ── */
+      .fields-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px 20px;
+        margin-bottom: 28px;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .field.full { grid-column: 1 / -1; }
+
+      .field label {
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.10em;
+        text-transform: uppercase;
+        color: var(--rose-dk);
+      }
+
+      .field input {
+        width: 100%;
+        padding: 11px 14px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.75);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 15px;
+        font-weight: 400;
+        color: var(--ink);
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        -moz-appearance: textfield;
+      }
+
+      .field input::-webkit-inner-spin-button,
+      .field input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+      .field input::placeholder { color: rgba(120,90,90,0.30); }
+
+      .field input:hover {
+        border-color: rgba(201,105,122,0.35);
+        background: rgba(255,255,255,0.92);
+      }
+
+      .field input:focus {
+        outline: none;
+        border-color: var(--rose);
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(201,105,122,0.12);
+      }
+
+      .hint {
+        font-size: 11px;
+        color: rgba(120,90,90,0.55);
+        letter-spacing: 0.02em;
+      }
+
+      /* ── BUTTON ── */
+      .button-row {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .btn {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, var(--rose-dk) 0%, var(--rose) 100%);
+        color: #fff;
+        border: none;
+        padding: 13px 30px;
+        border-radius: 999px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 13.5px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(160,77,93,0.30), 0 2px 4px rgba(160,77,93,0.20);
+        transition: transform 0.15s, box-shadow 0.15s;
+      }
+
+      .btn::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 60%);
+        border-radius: inherit;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(160,77,93,0.36), 0 4px 8px rgba(160,77,93,0.18);
+      }
+
+      .btn:active { transform: translateY(0); }
+
+      /* ── DIVIDER ── */
+      .divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 30px 0;
+        opacity: 0.40;
+      }
+      .divider::before, .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--rose);
+      }
+      .divider span {
+        font-size: 10px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--rose);
+        font-weight: 600;
+      }
+
+      /* ── RESULT ── */
+      .result {
+        border-radius: 14px;
+        padding: 20px 22px;
+        animation: slideUp 0.4s ease;
+      }
+
+      @keyframes slideUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      .result.low  { background: linear-gradient(135deg, #e8f7f3, #d4ebe4); border: 1px solid rgba(90,138,122,0.25); }
+      .result.mid  { background: linear-gradient(135deg, #fef8eb, #fdedc8); border: 1px solid rgba(200,160,60,0.25); }
+      .result.high { background: linear-gradient(135deg, #fceef0, #f8d8dc); border: 1px solid rgba(201,105,122,0.28); }
+
+      .result-label {
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+      }
+
+      .result.low  .result-label { color: #2c7a62; }
+      .result.mid  .result-label { color: #8a6010; }
+      .result.high .result-label { color: var(--rose-dk); }
+
+      .result-heading {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 26px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        line-height: 1.2;
+      }
+
+      .result.low  .result-heading { color: #1a5c48; }
+      .result.mid  .result-heading { color: #6b4a06; }
+      .result.high .result-heading { color: #8a2030; }
+
+      .probs {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(0,0,0,0.08);
+      }
+
+      .prob-pill {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        background: rgba(255,255,255,0.55);
+        border-radius: 8px;
+        padding: 8px 14px;
+        flex: 1;
+        min-width: 80px;
+      }
+
+      .prob-pill .p-label {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .prob-pill .p-value {
+        font-size: 17px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+
+      /* ── FOOTER NOTE ── */
+      .footer-note {
+        text-align: center;
+        margin-top: 22px;
+        font-size: 11.5px;
+        color: rgba(120,90,90,0.50);
+        letter-spacing: 0.02em;
+        line-height: 1.6;
+      }
+
+      @media (max-width: 480px) {
+        .card { padding: 28px 24px 32px; }
+        .fields-grid { grid-template-columns: 1fr; }
+        .field.full { grid-column: 1; }
+        .header { padding-top: 36px; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="header">
+      <div class="header-eyebrow">Risk Assessment Tool</div>
+      <h1 class="header-title">Maternal <em>Health</em><br>Risk Predictor</h1>
+      <p class="header-sub">Enter key vital signs below to estimate maternal health risk.</p>
+    </div>
+
+    <div class="page-wrap">
+      <div class="card">
+        <form method="post">
+          <div class="fields-grid">
+            {% for name, meta in features.items() %}
+              <div class="field{% if loop.last and loop.index is odd %} full{% endif %}">
+                <label>{{ name.replace("_", " ").title() }}</label>
+                <input
+                  type="number"
+                  name="{{ name }}"
+                  step="0.1"
+                  value="{{ form_data.get(name, '') }}"
+                  placeholder="{% if meta.min is defined and meta.max is defined %}{{ meta.min }} – {{ meta.max }}{% endif %}"
+                  required
+                >
+                {% if meta.min is defined or meta.max is defined %}
+                  <span class="hint">
+                    {% if meta.min is defined %}{{ meta.min }}{% endif %}
+                    {% if meta.min is defined and meta.max is defined %} – {% endif %}
+                    {% if meta.max is defined %}{{ meta.max }}{% endif %}
+                  </span>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="button-row">
+            <button type="submit" class="btn">Predict Risk →</button>
+          </div>
+        </form>
+
+        {% if prediction %}
+          {% set cls = 'low' %}
+          {% if 'High' in prediction %}
+            {% set cls = 'high' %}
+          {% elif 'Medium' in prediction or 'Mid' in prediction %}
+            {% set cls = 'mid' %}
+          {% endif %}
+
+          <div class="divider"><span>Result</span></div>
+
+          <div class="result {{ cls }}">
+            <div class="result-label">Risk Classification</div>
+            <div class="result-heading">{{ prediction }}</div>
+
+            {% if probs %}
+              <div class="probs">
+                <div class="prob-pill">
+                  <span class="p-label">Low</span>
+                  <span class="p-value">{{ probs.low }}</span>
+                </div>
+                <div class="prob-pill">
+                  <span class="p-label">Medium</span>
+                  <span class="p-value">{{ probs.mid }}</span>
+                </div>
+                <div class="prob-pill">
+                  <span class="p-label">High</span>
+                  <span class="p-value">{{ probs.high }}</span>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+
+      <p class="footer-note">Prototype only · Not a substitute for clinical diagnosis</p>
+    </div>
+
+  </body>
+</html>

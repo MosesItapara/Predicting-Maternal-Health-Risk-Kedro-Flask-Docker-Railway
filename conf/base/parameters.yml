@@ -1,0 +1,28 @@
+## Data Preprocessing
+test_size: 0.2
+random_state: 42
+target_column: RiskLevel
+
+risk_mapping:
+  low risk: 0
+  mid risk: 1
+  high risk: 2
+
+## Model (XGBoost)
+model:
+  n_estimators: 500
+  max_depth: 6
+  learning_rate: 0.1
+  subsample: 0.8
+  colsample_bytree: 0.8
+  reg_alpha: 0.1  ## L1 regularization term on weights. Increasing this value will make the model more conservative.
+  reg_lambda: 1   ## L2 regularization term on weights. Increasing this value will make the model more conservative.
+
+## Training
+training:
+  class_weight_strategy: balanced
+
+# ─── Clinical decision thresholds ─────────────────────────────────────────────
+clinical_thresholds:
+  high_risk_threshold: 0.60
+  mid_risk_threshold: 0.55

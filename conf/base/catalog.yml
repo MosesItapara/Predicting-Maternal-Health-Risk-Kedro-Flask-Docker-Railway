@@ -1,0 +1,82 @@
+
+## RAW DATA
+raw_data:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/Maternal Health Risk Data Set.csv
+
+## INTERMEDIATE DATA
+cleaned_data:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/cleaned_data.csv
+
+# PRIMARY DATA
+encoded_data:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/encoded_data.csv
+
+# MODEL INPUT
+X_train:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/X_train.csv
+
+X_test:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/X_test.csv
+
+y_train:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/y_train.csv
+
+y_test:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/y_test.csv
+
+## ARTIFACTS
+scaler:
+  type: pickle.PickleDataset
+  filepath: data/06_models/scaler.pkl
+  backend: joblib
+
+xgb_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/xgb_model.json
+  backend: joblib
+
+# MODEL OUTPUT
+predictions:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/predictions.csv
+
+## REPORTING
+train_metrics:
+  type: tracking.MetricsDataset
+  filepath: data/08_reporting/train_metrics.json
+
+metrics:
+  type: tracking.MetricsDataset
+  filepath: data/08_reporting/metrics.json
+
+shap_importance:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/shap_importance.csv
+
+calibrated_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/calibrated_model.pkl
+  backend: joblib
+
+drift_report:
+  type: pandas.CSVDataset
+  fileparh: data/08_reporting/drift_report.csv
+
+reference_data:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/reference_data.csv
+
+clinical_predictions:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/clinical_predictions.csv
+
+fairness_by_age:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/fairness_by_age.csv
